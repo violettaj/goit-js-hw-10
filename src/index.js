@@ -15,30 +15,38 @@ inputSearch.addEventListener('input', debounce(searchCountry, DEBOUNCE_DELAY));
 
 
 function searchCountry() {
-	list.innerHTML = '';
-	info.innerHTML = '';
+	
 	const name = inputSearch.value.trim()
-	const nameString =inputSearch.value.toString()	
 	 if (name) {
 		fetchCountries(name)
-			.then(response => {
-			if (response.length > 10) {
+			.then(countries => {
+			if (countries.length > 10) {
 					Notify.info('Too many matches found. Please enter a more specific name.')
-				} else if (response.length >= 2) {
-					list.insertAdjacentHTML('beforeend', response.map(element => `<li class="country-list__item">
-					<img class="country-list__flag flag" src="${element.flags.svg}" alt="The flag of ${element.name}">
-					<p><h3>${element.name}</h3></p>
-					</li>`).join(''));
-				} else {
-					info.insertAdjacentHTML('beforeend', `<ul class="country-info__list">
-					<li class="country-info__item">
-						<img class="country-info__flag flag" src="${response[0].flags.svg}" alt="${response[0].name}">
-						<h2>${response[0].name}</h2></li>
-					<li class="country-info__item"><p><span>Capital:</span> ${response[0].capital}</p></li>
-					<li class="country-info__item"><p><span>Population:</span> ${response[0].population}</p></li>
-					<li class="country-info__item"><p><span>Languages:</span> ${Object.values(response[0].languages).join(', ')}</p></li>
-					</ul>`);
-				}
+				} else if (countries.length >= 2 && countries.length <= 10) {
+
+					list.innerHTML = "";
+					info.innerHTML = "";
+					const markup = countries.map((country) => {
+					  const markupText = `<li class="country-list__item"><img src=${country.flags.svg} class="country-list__flag"><p>${country.name}</p></li>`
+					  return markupText
+					}).join(" ");
+					const markupReplaced = markup.replaceAll("undefined", "")
+					list.innerHTML = markupReplaced;
+				
+				  } else if (countries.length === 1) {
+				
+					list.innerHTML = null;
+					const markup = countries.map((country) => {
+					  const parsedLanguages = country.languages.length === 1 ? country.languages[0].name : country.languages.map(lang => lang.name).join(', ');
+					  return `<ul class="country-info__list">
+					  <li class="country-info__item"><img src="${country.flags.svg}" class="country-info__flag" alt="Flag of ${country.name}"><p><b>${country.name}</b></p></li>
+					  <li class="country-info__item"><b>Capital:</b> ${country.capital}</li>
+					  <li class="country-info__item"><b>Population:</b> ${country.population}</li>
+					  <li class="country-info__item"><b>Languages:</b> ${parsedLanguages}</li></ul>`
+					}).join(" ");
+					const markupReplaced = markup.replaceAll("undefined", "-")
+					info.innerHTML = markupReplaced;
+				  }
                 
 			})
 			.catch((error) => {

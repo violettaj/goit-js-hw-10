@@ -10,6 +10,8 @@ body {
   background-color: #fafafa;
   color: #212121;
   line-height: 1.5;
+  background-image: radial-gradient(circle at 1px 1px, black 1px, transparent 0);
+  background-size: 50px 30px;
 }
 
 #search-box {
@@ -19,10 +21,19 @@ body {
   margin-bottom: 16px;
 }
 
-.country-info__list {
+.country-info__list, .country-list__item {
   list-style: none;
 }
-
+.country-list__item {
+  display:flex;
+  flex-direction: row;
+  gap: 8px;
+}
+.country-info__item {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
 img {
   width: 50px;
 }
